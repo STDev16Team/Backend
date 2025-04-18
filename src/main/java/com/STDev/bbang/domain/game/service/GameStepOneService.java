@@ -6,17 +6,13 @@ import com.STDev.bbang.domain.game.entity.Game;
 import com.STDev.bbang.domain.game.repository.GameRepository;
 import com.STDev.bbang.domain.member.entity.Member;
 import com.STDev.bbang.domain.member.repository.MemberRepository;
-import com.STDev.bbang.domain.reward.entity.RewardInfo;
-import com.STDev.bbang.domain.reward.repository.RewardInfoRepository;
+import com.STDev.bbang.domain.reward.service.RewardService;
 import com.STDev.bbang.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.STDev.bbang.global.exception.ErrorCode.ACCESS_DENIED;
 
@@ -27,7 +23,10 @@ public class GameStepOneService {
 
     private final GameRepository gameRepository;
     private final MemberRepository memberRepository;
-    private final RewardInfoRepository rewardInfoRepository;
+    private final RewardService rewardService;
+
+    private static final String MAX_SELECT_REWARD = "업적 달성: 욕심쟁이 도우냥";
+    private static final String MIN_SELECT_REWARD = "업적 달성: 조심성 도우냥";
 
     public ApiResponse<?> stepOne(Long memberId, List<Integer> select) {
         Optional<Member> optionalMember = memberRepository.findById(memberId);
@@ -44,12 +43,12 @@ public class GameStepOneService {
 
         // 욕심쟁이 도우냥 업적
         if (isAllSelected(select)) {
-            dto.setReward(maxSelectReward(memberId));
+            dto.setReward(rewardService.updateReward(memberId, 1, MAX_SELECT_REWARD));
         }
 
         // 조심성 도우냥 업적
         if(isMinSelect(select)) {
-            dto.setReward(minSelectReward(memberId));
+            dto.setReward(rewardService.updateReward(memberId, 2, MIN_SELECT_REWARD));
         }
 
         // 빵 유형 판단
@@ -94,35 +93,7 @@ public class GameStepOneService {
         return new HashSet<>(select).containsAll(full);
     }
 
-    private String maxSelectReward(Long memberId) {
-        Optional<RewardInfo> rewardInfo = rewardInfoRepository.findByMemberIdAndRewardId(memberId, 1);
-
-        if(rewardInfo.isPresent()) {
-            RewardInfo info = rewardInfo.get();
-
-            if(!info.isSuccessFlag()) {
-                info.success();
-                return "업적 달성: 욕심쟁이 도우냥";
-            }
-        }
-        return null;
-    }
-
     private boolean isMinSelect(List<Integer> select) {
         return select.size() <= 2;
-    }
-
-    private String minSelectReward(Long memberId) {
-        Optional<RewardInfo> rewardInfo = rewardInfoRepository.findByMemberIdAndRewardId(memberId, 2);
-
-        if(rewardInfo.isPresent()) {
-            RewardInfo info = rewardInfo.get();
-
-            if(!info.isSuccessFlag()) {
-                info.success();
-                return "업적 달성: 조심성 도우냥";
-            }
-        }
-        return null;
     }
 }

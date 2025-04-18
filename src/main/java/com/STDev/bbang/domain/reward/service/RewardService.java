@@ -13,10 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.STDev.bbang.global.exception.ErrorCode.ACCESS_DENIED;
@@ -91,5 +88,19 @@ public class RewardService {
 
             rewardInfoRepository.save(info);
         }
+    }
+
+    public String updateReward(Long memberId, int rewardId, String reward) {
+        Optional<RewardInfo> rewardInfo = rewardInfoRepository.findByMemberIdAndRewardId(memberId, rewardId);
+
+        if(rewardInfo.isPresent()) {
+            RewardInfo info = rewardInfo.get();
+
+            if(!info.isSuccessFlag()) {
+                info.success();
+                return reward;
+            }
+        }
+        return null;
     }
 }
