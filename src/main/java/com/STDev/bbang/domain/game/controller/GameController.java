@@ -16,6 +16,7 @@ public class GameController {
     private final GameStepOneService gameStepOneService;
     private final GameStepTwoService gameStepTwoService;
     private final GameStepThreeService gameStepThreeService;
+    private final GameStepFourService gameStepFourService;
 
     @PostMapping("/step1")
     public ApiResponse<?> stepOne(@RequestHeader("X-USER-ID") Long memberId, @RequestBody StepOneDto dto) {
@@ -30,5 +31,10 @@ public class GameController {
     @PostMapping("/step3")
     public ApiResponse<?> stepThree(@RequestHeader("X-USER-ID") Long memberId, @RequestBody StepThreeDto dto) {
         return gameStepThreeService.stepThree(memberId, dto.getGameId(), dto.getTap());
+    }
+
+    @PostMapping("/step4")
+    public ApiResponse<?> stepFour(@RequestHeader("X-USER-ID") Long memberId, @RequestBody StepFourDto dto) {
+        return gameStepFourService.stepFour(memberId, dto.getGameId(), dto.getQuiz());
     }
 }
