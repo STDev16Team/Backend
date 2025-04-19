@@ -44,16 +44,14 @@ public class RewardService {
                 .map(RewardInfo::getRewardId)
                 .collect(Collectors.toSet());
 
-        // Reward 처리 - 못한 건 ?? 처리
+        // Reward 처리
         List<RewardDto> dtoList = allRewards.stream()
-                .map(reward -> {
-                    boolean achieved = achievedRewardIds.contains(reward.getRewardId());
-                    return new RewardDto(
-                            reward.getRewardId(),
-                            achieved ? reward.getTitle() : "??",
-                            achieved ? reward.getImage() : "??"
-                    );
-                })
+                .filter(reward -> achievedRewardIds.contains(reward.getRewardId()))
+                .map(reward -> new RewardDto(
+                        reward.getRewardId(),
+                        reward.getTitle(),
+                        reward.getImage()
+                ))
                 .collect(Collectors.toList());
 
         return ApiResponse.createSuccess(dtoList, "업적 조회 성공");
