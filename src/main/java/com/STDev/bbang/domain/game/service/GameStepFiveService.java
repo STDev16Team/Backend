@@ -60,7 +60,7 @@ public class GameStepFiveService {
             dto.setReward(rewardService.updateReward(memberId, 10, DIE_REWARD));
             return ApiResponse.createSuccess(dto, "굽기\n습도가 맞지 않아요.\n다시 한 번 해보면 잘 할 수 있지 않을까요?");
         }
-        else if(cnt == 3) { // 하트 끝
+        else if(cnt >= 3) { // 하트 끝
             game.setDieFlag(true);
             dto.setReward(rewardService.updateReward(memberId, 12, HUM_OVER_REWARD));
             return ApiResponse.createSuccess(dto, "굽기\n오븐이 고장났나봐요.\n다시 한 번 해보면 잘 할 수 있지 않을까요?");
