@@ -18,6 +18,7 @@ public class GameController {
     private final GameStepTwoService gameStepTwoService;
     private final GameStepThreeService gameStepThreeService;
     private final GameStepFourService gameStepFourService;
+    private final GameStepFiveService gameStepFiveService;
 
     @GetMapping("/{gameId}")
     public ApiResponse<?> gameInfo(@RequestHeader("X-USER-ID") Long memberId, @PathVariable Long gameId) {
@@ -42,5 +43,13 @@ public class GameController {
     @PostMapping("/step4")
     public ApiResponse<?> stepFour(@RequestHeader("X-USER-ID") Long memberId, @RequestBody StepFourDto dto) {
         return gameStepFourService.stepFour(memberId, dto.getGameId(), dto.getQuiz());
+    }
+
+    @PostMapping("/step5")
+    public ApiResponse<?> stepFive(@RequestHeader("X-USER-ID") Long memberId, @RequestBody StepFiveDto dto) {
+        return gameStepFiveService.stepFive(memberId, dto.getGameId(),
+                dto.getDownTem(), dto.getTopTem(),
+                dto.getDownHum(), dto.getTopHum(),
+                dto.isTemDieFlag(), dto.isHumDieFlag(), dto.isTimeFlag());
     }
 }
