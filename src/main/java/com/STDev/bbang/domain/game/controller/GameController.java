@@ -13,10 +13,16 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/game")
 public class GameController {
 
+    private final GameService gameService;
     private final GameStepOneService gameStepOneService;
     private final GameStepTwoService gameStepTwoService;
     private final GameStepThreeService gameStepThreeService;
     private final GameStepFourService gameStepFourService;
+
+    @GetMapping("/{gameId}")
+    public ApiResponse<?> gameInfo(@RequestHeader("X-USER-ID") Long memberId, @PathVariable Long gameId) {
+        return gameService.gameEnding(memberId, gameId);
+    }
 
     @PostMapping("/step1")
     public ApiResponse<?> stepOne(@RequestHeader("X-USER-ID") Long memberId, @RequestBody StepOneDto dto) {
