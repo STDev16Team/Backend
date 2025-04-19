@@ -50,6 +50,6 @@ public class GameStepFourService {
         dto.setReward(rewardService.updateReward(memberId, 8, FAIL_QUIZ_REWARD));
         game.die();
         dto.setPass(false);
-        return ApiResponse.createSuccess(dto, "2차 발효\n퀴즈를 틀렸어요.\n다시 한 번 해보면 잘 할 수 있지 않을까요?");
+        return ApiResponse.createSuccess(dto, "2차 발효\n퀴즈를 헷갈리는 사이 반죽이 지쳐버렸어요..!\n다시 한 번 해볼까요?");
     }
 }
