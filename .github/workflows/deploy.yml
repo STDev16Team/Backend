@@ -1,0 +1,41 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches: [ main ]  # main 브랜치에 push 될 때만 실행
+
+jobs:
+  deploy:
+    name: Spring Boot 배포
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ✅ 소스 코드 체크아웃
+        uses: actions/checkout@v3
+
+      - name: ☕ JDK 설정
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: ⚙️ Gradle 빌드
+        run: ./gradlew clean build -x test
+
+      - name: 📦 EC2에 배포
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USER }}
+          key: ${{ secrets.AWS_KEY }}
+          source: "build/libs/*.jar"
+          target: "~/app" # EC2에서 배포 디렉토리
+
+      - name: 📄 application.yml 생성
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USER }}
+          key: ${{ secrets.AWS_KEY }}
+          script: |
+            echo -e "${{ secrets.APP_YML }}" > ~/app/application.yml
